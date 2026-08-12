@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Все статьи{% endblock %}
+
+{% block content %}
+<h2>Статьи блога</h2>
+<hr>
+{% for article in articles %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h3 class="card-title"><a href="{% url 'post_detail' pk=article.pk %}" class="text-decoration-none">{{ article.title }}</a></h3>
+            <p class="card-text text-muted">Автор: {{ article.author.username }} | {{ article.created_at|date:"d.m.Y H:i" }}</p>
+            <p class="card-text">{{ article.content|truncatewords:30 }}</p>
+            <a href="{% url 'post_detail' pk=article.pk %}" class="btn btn-primary btn-sm">Читать далее &rarr;</a>
+        </div>
+    </div>
+{% empty %}
+    <p>Статей пока нет.</p>
+{% endfor %}
+{% endblock %}

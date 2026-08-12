@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<article>
+    <h2>{{ article.title }}</h2>
+    <p class="text-muted">Автор: {{ article.author.username }} | {{ article.created_at|date:"d.m.Y H:i" }}</p>
+    
+    {% if user == article.author %}
+        <div class="mb-3">
+            <a href="{% url 'post_edit' pk=article.pk %}" class="btn btn-warning btn-sm">Редактировать</a>
+            <a href="{% url 'post_delete' pk=article.pk %}" class="btn btn-danger btn-sm">Удалить</a>
+        </div>
+    {% endif %}
+
+    <div class="lead mb-4">
+        {{ article.content|linebreaks }}
+    </div>
+</article>
+
+<hr>
+
+<h3>Комментарии ({{ comments.count }})</h3>
+<div class="mb-4">
+    {% for comment in comments %}
+        <div class="card mb-2">
+            <div class="card-body py-2">
+                <strong>{{ comment.author.username }}</strong> 
+                <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                <p class="mb-0 mt-1">{{ comment.text }}</p>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">Пока нет комментариев.</p>
+    {% endfor %}
+</div>
+
+{% if user.is_authenticated %}
+    <h4>Оставить комментарий</h4>
+    <form method="post" class="mb-5">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ comment_form.text }}
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+{% endif %}
+
+<a href="{% url 'post_list' %}" class="btn btn-secondary mb-4">&larr; Назад к статьям</a>
+{% endblock %}
